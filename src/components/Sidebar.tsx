@@ -46,11 +46,10 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
                   onClick={onNavigate}
                   to={module.to}
                 >
-                  {({ isActive }) => (
+                  {() => (
                     <>
                       <Icon name={module.icon} size={19} />
                       <span className="flex-1 text-left">{module.label}</span>
-                      {module.label === 'Appointments' && <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${isActive ? 'bg-white/80' : 'bg-slate-100 text-slate-500'}`}>8</span>}
                     </>
                   )}
                 </NavLink>

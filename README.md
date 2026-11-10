@@ -29,6 +29,12 @@ Requires Node.js 22.18 or newer and a PostgreSQL database.
 
 The browser sends `VITE_API_KEY` in requests, which makes that value visible to users. The assessment requires this header. Do not treat the browser key as a secret for protecting privileged data.
 
+## Clinic dashboard
+
+The admin dashboard reads the live slot schedule to show booked and available appointment counts, provider slot totals, and weekly booking counts. The Appointments view lists scheduled slots. Patients can be searched by email, their bookings paged, and confirmed bookings cancelled.
+
+The assessment API does not provide a global booking-list endpoint, provider profiles, clinic preferences, booking completion outcomes, or a safe endpoint for adding/editing individual slots. The dashboard therefore does not invent patient details or expose `/reset` as a normal schedule editor; that endpoint deletes all bookings when replacing slots. Patient details are retrieved through the contract's email-filtered booking endpoint.
+
 ## Deploy on Render with managed PostgreSQL
 
 The included [render.yaml](./render.yaml) deploys the Node API and built frontend together as one web service, so their URLs share an origin. Render creates the HTTPS base URL after deployment. Create a managed PostgreSQL database with a provider such as Neon, then:
