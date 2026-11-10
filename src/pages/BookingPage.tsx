@@ -182,7 +182,7 @@ export function BookingPage() {
             <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2.5 text-left text-xs leading-5 text-emerald-800">Your appointment has been saved. Keep your confirmation number for your records.</p>
             <button className="mt-6 rounded-xl bg-[#294878] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#203b63]" onClick={() => { setConfirmation(null); setSelectedSlot(null); setIdempotencyKey('') }}>Book another appointment</button>
           </section>
-          <p className="mt-6 text-center text-xs text-slate-400"><Link className="font-medium text-[#294878] hover:underline" to="/dashboard">Clinic administrator? Go to the admin portal</Link></p>
+          <p className="mt-6 text-center text-xs text-slate-400"><Link className="font-medium text-[#294878] hover:underline" to="/dashboard">Back to clinic dashboard</Link></p>
         </div>
       </main>
     )
@@ -193,7 +193,7 @@ export function BookingPage() {
       <div className="mx-auto max-w-6xl">
         <header className="flex items-center justify-between">
           <BookingBrand />
-          <Link className="text-xs font-medium text-slate-500 transition hover:text-[#294878]" to="/dashboard">Admin portal</Link>
+          <Link className="text-xs font-medium text-slate-500 transition hover:text-[#294878]" to="/dashboard">Clinic dashboard</Link>
         </header>
 
         <div className="mt-9 grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.8fr)] lg:gap-8">

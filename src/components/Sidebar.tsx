@@ -5,6 +5,7 @@ import { ProfileAvatar } from './ProfileAvatar'
 const modules: { label: string; to: string; icon: IconName; group: 'Workspace' | 'Manage' }[] = [
   { label: 'Dashboard', to: '/dashboard', icon: 'dashboard', group: 'Workspace' },
   { label: 'Appointments', to: '/appointments', icon: 'calendar', group: 'Workspace' },
+  { label: 'Book appointment', to: '/book', icon: 'plus', group: 'Workspace' },
   { label: 'Availability', to: '/availability', icon: 'clock', group: 'Workspace' },
   { label: 'Patients', to: '/patients', icon: 'users', group: 'Manage' },
   { label: 'Providers', to: '/providers', icon: 'stethoscope', group: 'Manage' },

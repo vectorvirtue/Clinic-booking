@@ -6,6 +6,7 @@ import { ProfileAvatar } from './ProfileAvatar'
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/appointments': 'Appointments',
+  '/book': 'Book appointment',
   '/availability': 'Availability',
   '/patients': 'Patients',
   '/providers': 'Providers',
