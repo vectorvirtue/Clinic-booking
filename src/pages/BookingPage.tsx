@@ -24,23 +24,6 @@ type BookingResponse = { id: string; slot_id: string; name: string; email: strin
 
 const currentYear = new Date().getFullYear()
 
-function getUpcomingDays() {
-  const today = new Date()
-  return Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(today)
-    date.setDate(today.getDate() + index)
-    return {
-      value: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,
-      weekday: date.toLocaleDateString('en', { weekday: 'short' }),
-      day: date.toLocaleDateString('en', { day: '2-digit' }),
-      month: date.toLocaleDateString('en', { month: 'short' }),
-      isToday: index === 0,
-    }
-  })
-}
-
-const dates = getUpcomingDays()
-
 function formatSelectedDate(value: string) {
   const [year, month, day] = value.split('-').map(Number)
   return new Date(year, month - 1, day).toLocaleDateString('en', {
@@ -56,6 +39,27 @@ function getLocalDate(value: string) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
+function getSlotDates(slots: AppointmentSlot[], now: number) {
+  const today = getLocalDate(new Date(now).toISOString())
+  return [...new Set(slots
+    .filter((slot) => new Date(slot.start).getTime() > now)
+    .map((slot) => getLocalDate(slot.start)))]
+    .sort()
+    .map((value) => {
+      const date = new Date(`${value}T00:00:00`)
+      return {
+        value,
+        weekday: date.toLocaleDateString('en', { weekday: 'short' }),
+        day: date.toLocaleDateString('en', { day: '2-digit' }),
+        month: date.toLocaleDateString('en', { month: 'short' }),
+        isToday: value === today,
+        hasAvailability: slots.some(
+          (slot) => slot.available && new Date(slot.start).getTime() > now && getLocalDate(slot.start) === value,
+        ),
+      }
+    })
+}
+
 function formatTime(value: string) {
   return new Date(value).toLocaleTimeString('en', { hour: 'numeric', minute: '2-digit' })
 }
@@ -65,7 +69,7 @@ function getInitials(value: string) {
 }
 
 export function BookingPage() {
-  const [selectedDate, setSelectedDate] = useState(dates[0].value)
+  const [selectedDate, setSelectedDate] = useState('')
   const [slots, setSlots] = useState<AppointmentSlot[]>([])
   const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(null)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
@@ -81,10 +85,9 @@ export function BookingPage() {
     apiRequest<SlotsResponse>('/slots', { signal: controller.signal })
       .then(({ slots: responseSlots }) => {
         setSlots(responseSlots)
-        const upcoming = dates.find((date) => responseSlots.some(
-          (slot) => slot.available && new Date(slot.start).getTime() > pageLoadedAt && getLocalDate(slot.start) === date.value,
-        ))
-        if (upcoming) setSelectedDate(upcoming.value)
+        const upcomingDates = getSlotDates(responseSlots, pageLoadedAt)
+        const firstAvailableDate = upcomingDates.find((date) => date.hasAvailability)
+        setSelectedDate(firstAvailableDate?.value ?? upcomingDates[0]?.value ?? '')
       })
       .catch((requestError: unknown) => {
         if (requestError instanceof DOMException && requestError.name === 'AbortError') return
@@ -98,9 +101,7 @@ export function BookingPage() {
     const startsAt = new Date(slot.start).getTime()
     return slot.available && startsAt > pageLoadedAt && getLocalDate(slot.start) === selectedDate
   })
-  const availableDates = new Set(slots
-    .filter((slot) => slot.available && new Date(slot.start).getTime() > pageLoadedAt)
-    .map((slot) => getLocalDate(slot.start)))
+  const dateOptions = getSlotDates(slots, pageLoadedAt)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -202,17 +203,18 @@ export function BookingPage() {
           <section>
             <section aria-labelledby="date-heading" className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_8px_rgba(27,45,72,0.04)] sm:p-6">
               <div className="flex items-start justify-between gap-3">
-                <div><h2 className="text-sm font-semibold text-slate-900" id="date-heading">Choose a date</h2><p className="mt-1 text-xs text-slate-500">Available appointments over the next 7 days</p></div>
+                <div><h2 className="text-sm font-semibold text-slate-900" id="date-heading">Choose a date</h2><p className="mt-1 text-xs text-slate-500">Dates with future appointments</p></div>
                 <Icon name="calendar" size={19} />
               </div>
-              <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-7">
-                {dates.map((date) => (
+              {dateOptions.length > 0 ? (
+                <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+                  {dateOptions.map((date) => (
                   <button
                     aria-pressed={selectedDate === date.value}
                     className={`flex flex-col items-center rounded-xl border px-2 py-3 transition disabled:cursor-not-allowed disabled:opacity-45 ${selectedDate === date.value ? 'border-[#294878] bg-[#294878] text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:border-[#829bbd] hover:bg-[#f7f9fc]'}`}
                     key={date.value}
                     onClick={() => { setSelectedDate(date.value); setSelectedSlot(null); setError(''); setIdempotencyKey('') }}
-                    disabled={isLoading || !availableDates.has(date.value)}
+                    disabled={isLoading || !date.hasAvailability}
                     type="button"
                   >
                     <span className={`text-[10px] font-medium ${selectedDate === date.value ? 'text-white/75' : 'text-slate-400'}`}>{date.isToday ? 'Today' : date.weekday}</span>
@@ -220,7 +222,12 @@ export function BookingPage() {
                     <span className={`text-[10px] ${selectedDate === date.value ? 'text-white/75' : 'text-slate-400'}`}>{date.month}</span>
                   </button>
                 ))}
-              </div>
+                </div>
+              ) : !isLoading && !loadError ? (
+                <p className="mt-5 rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center text-xs text-slate-500" role="status">
+                  No future appointment slots are scheduled yet.
+                </p>
+              ) : null}
             </section>
 
             <section aria-labelledby="slot-heading" className="mt-5 rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_8px_rgba(27,45,72,0.04)] sm:p-6">
