@@ -158,10 +158,9 @@ export function BookingPage() {
 
   if (confirmation) {
     return (
-      <main className="min-h-screen bg-[#f7f9fc] px-4 py-8 sm:px-6 sm:py-12">
-        <div className="mx-auto max-w-xl">
-          <BookingBrand />
-          <section className="mt-8 rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-[0_8px_32px_rgba(27,45,72,0.07)] sm:p-10">
+      <div className="mx-auto max-w-[1500px] px-5 py-8 md:px-8 lg:px-10">
+        <div className="mx-auto max-w-2xl">
+          <section className="rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-[0_8px_32px_rgba(27,45,72,0.07)] sm:p-10">
             <span className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-emerald-600">
               <svg aria-hidden="true" className="size-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" /></svg>
             </span>
@@ -184,26 +183,23 @@ export function BookingPage() {
           </section>
           <p className="mt-6 text-center text-xs text-slate-400"><Link className="font-medium text-[#294878] hover:underline" to="/dashboard">Back to clinic dashboard</Link></p>
         </div>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f9fc] px-4 py-6 sm:px-6 sm:py-9">
-      <div className="mx-auto max-w-6xl">
-        <header className="flex items-center justify-between">
-          <BookingBrand />
-          <Link className="text-xs font-medium text-slate-500 transition hover:text-[#294878]" to="/dashboard">Clinic dashboard</Link>
-        </header>
+    <div className="mx-auto max-w-[1500px] px-5 py-8 md:px-8 lg:px-10">
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="mb-2 text-[10px] font-bold tracking-[0.16em] text-[#294878]">WORKSPACE · BOOKING</p>
+          <h1 className="text-[26px] font-semibold tracking-tight text-slate-900 sm:text-[30px]">Book an appointment</h1>
+          <p className="mt-1.5 text-sm text-slate-500">Choose an available clinic time and enter the patient details.</p>
+        </div>
+        <Link className="text-xs font-semibold text-[#294878] transition hover:text-[#203b63]" to="/appointments">View schedule <span aria-hidden="true">›</span></Link>
+      </div>
 
-        <div className="mt-9 grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.8fr)] lg:gap-8">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(300px,0.8fr)] lg:gap-8">
           <section>
-            <div className="mb-6">
-              <p className="text-[10px] font-bold tracking-[0.16em] text-[#294878]">WELLNEST CLINIC</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Book an appointment</h1>
-              <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">Choose a date and a time that works for you. We&apos;ll help you take it from there.</p>
-            </div>
-
             <section aria-labelledby="date-heading" className="rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_8px_rgba(27,45,72,0.04)] sm:p-6">
               <div className="flex items-start justify-between gap-3">
                 <div><h2 className="text-sm font-semibold text-slate-900" id="date-heading">Choose a date</h2><p className="mt-1 text-xs text-slate-500">Available appointments over the next 7 days</p></div>
@@ -301,20 +297,7 @@ export function BookingPage() {
           </aside>
         </div>
 
-        <footer className="mt-10 border-t border-slate-200 py-5 text-center text-[10px] text-slate-400">© {currentYear} Wellnest Clinic · Your health, well cared for.</footer>
-      </div>
-    </main>
-  )
-}
-
-function BookingBrand() {
-  return (
-    <Link className="inline-flex items-center gap-3 no-underline" to="/book">
-      <img alt="" className="size-10 rounded-xl" src="/favicon.svg" />
-      <span className="flex flex-col leading-tight">
-        <strong className="text-lg font-bold tracking-tight text-slate-900">Wellnest Clinic</strong>
-        <small className="mt-1 text-[9px] font-bold tracking-[0.16em] text-slate-400">APPOINTMENT BOOKING</small>
-      </span>
-    </Link>
+      <footer className="mt-10 border-t border-slate-200 py-5 text-center text-[10px] text-slate-400">© {currentYear} Wellnest Clinic · Your health, well cared for.</footer>
+    </div>
   )
 }
