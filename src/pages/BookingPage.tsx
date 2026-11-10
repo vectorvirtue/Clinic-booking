@@ -214,12 +214,14 @@ export function BookingPage() {
                     className={`flex flex-col items-center rounded-xl border px-2 py-3 transition disabled:cursor-not-allowed disabled:opacity-45 ${selectedDate === date.value ? 'border-[#294878] bg-[#294878] text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:border-[#829bbd] hover:bg-[#f7f9fc]'}`}
                     key={date.value}
                     onClick={() => { setSelectedDate(date.value); setSelectedSlot(null); setError(''); setIdempotencyKey('') }}
-                    disabled={isLoading || !date.hasAvailability}
+                    disabled={isLoading}
                     type="button"
+                    aria-label={`${date.isToday ? 'Today' : `${date.weekday}, ${date.month} ${date.day}`}${date.hasAvailability ? '' : ', no available times'}`}
                   >
                     <span className={`text-[10px] font-medium ${selectedDate === date.value ? 'text-white/75' : 'text-slate-400'}`}>{date.isToday ? 'Today' : date.weekday}</span>
                     <span className="mt-1 text-lg font-semibold">{date.day}</span>
                     <span className={`text-[10px] ${selectedDate === date.value ? 'text-white/75' : 'text-slate-400'}`}>{date.month}</span>
+                    {!date.hasAvailability && <span className={`mt-1 text-[8px] ${selectedDate === date.value ? 'text-white/70' : 'text-slate-400'}`}>No times</span>}
                   </button>
                 ))}
                 </div>
